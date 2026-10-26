@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DevPulse Enterprise — Inteligencia de desarrollo web, tendencias de arquitectura y starter kits de grado producción.">
+  <title>DevPulse Enterprise — Web Architecture & Production Rootkits</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f3ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+              950: '#0b0f19',
+            },
+            surface: {
+              50: '#f8fafc',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#080d1a',
+              card: '#111827',
+              border: 'rgba(255, 255, 255, 0.08)'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          },
+          boxShadow: {
+            'glow-indigo': '0 0 25px -5px rgba(99, 102, 241, 0.25)',
+            'glow-emerald': '0 0 20px -5px rgba(16, 185, 129, 0.2)'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: #080c16;
+    }
+    pre, code { font-family: 'JetBrains Mono', monospace; }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #080c16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-header {
+      background: rgba(8, 12, 22, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gradient-border {
+      position: relative;
+    }
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.02));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-[#080c16] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- TOP ENTERPRISE BANNER / TICKER -->
+  <div class="bg-gradient-to-r from-brand-950 via-slate-900 to-brand-950 border-b border-white/5 py-1.5 px-4 text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-mono text-[11px] font-semibold border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> SYSTEM OK
+        </span>
+        <span class="hidden sm:inline text-slate-400">Motor de Inteligencia Técnica v3.4 • Conexión Gemini AI Directa</span>
+      </div>
+      <div class="flex items-center gap-4 text-[11px] font-mono text-slate-400">
+        <span class="hidden md:inline"><i class="fa-solid fa-clock mr-1 text-brand-400"></i> Latencia: <span class="text-emerald-400">24ms</span></span>
+        <span><i class="fa-solid fa-shield-halved text-brand-400 mr-1"></i> Grado Producción</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 w-full border-b border-white/10 glass-header">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4 py-3">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3.5 group">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-cyan-400 p-[1px] shadow-glow-indigo transition-transform group-hover:scale-105">
+          <div class="w-full h-full bg-slate-950 rounded-[15px] flex items-center justify-center">
+            <i class="fa-solid fa-layer-group text-lg bg-gradient-to-r from-brand-400 to-cyan-300 bg-clip-text text-transparent"></i>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-xl tracking-tight text-white font-sans">DevPulse</span>
+            <span class="px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-widest bg-brand-500/20 text-brand-300 rounded border border-brand-500/30 font-bold">PRO</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium tracking-wide">Enterprise Web Intelligence & Blueprints</p>
+        </div>
+      </a>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center p-1 rounded-xl bg-slate-900/90 border border-white/10">
+        <button id="nav-news" onclick="switchTab('news')" class="px-4 py-2 text-xs font-bold rounded-lg transition-all text-white bg-brand-600 shadow-md flex items-center gap-2">
+          <i class="fa-solid fa-newspaper text-xs"></i>
+          <span>Noticias & Arch</span>
+        </button>
+        <button id="nav-starters" onclick="switchTab('starters')" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-cubes-stacked text-xs"></i>
+          <span>Rootkits & Starters</span>
+        </button>
+        <button id="nav-saved" onclick="switchTab('saved')" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-bookmark text-xs text-amber-400"></i>
+          <span>Guardados</span>
+          <span id="saved-count" class="ml-1 px-1.5 py-0.2 bg-white/10 rounded-full text-[10px]">0</span>
+        </button>
+      </nav>
+
+      <!-- Action Controls -->
+      <div class="flex items-center gap-3">
+        <button onclick="fetchLiveNews(true)" class="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-200 bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 rounded-xl transition-all hover:border-brand-500/40">
+          <i class="fa-solid fa-rotate text-brand-400" id="refresh-icon"></i>
+          <span class="hidden sm:inline">Sincronizar AI</span>
+        </button>
+        
+        <button onclick="openCustomQueryModal()" class="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-brand-600/25 transition-all flex items-center gap-2">
+          <i class="fa-solid fa-terminal"></i>
+          <span>Generar Blueprint</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Nav Bar -->
+    <div class="md:hidden flex border-t border-white/10 bg-slate-950/90 px-3 py-2 justify-around">
+      <button id="mob-nav-news" onclick="switchTab('news')" class="flex flex-col items-center p-1.5 text-xs font-semibold text-brand-400">
+        <i class="fa-solid fa-newspaper text-base mb-1"></i>Noticias
+      </button>
+      <button id="mob-nav-starters" onclick="switchTab('starters')" class="flex flex-col items-center p-1.5 text-xs font-semibold text-slate-400">
+        <i class="fa-solid fa-cubes-stacked text-base mb-1"></i>Rootkits
+      </button>
+      <button id="mob-nav-saved" onclick="switchTab('saved')" class="flex flex-col items-center p-1.5 text-xs font-semibold text-slate-400">
+        <i class="fa-solid fa-bookmark text-base mb-1"></i>Guardados
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO SECTION WITH EXECUTIVE METRICS -->
+  <section class="relative overflow-hidden border-b border-white/10 py-12 sm:py-16 bg-gradient-to-b from-slate-900/80 via-[#080c16] to-[#080c16]">
+    
+    <!-- Decorative Glows -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-brand-600/10 blur-[120px] pointer-events-none -z-10 rounded-full"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl mx-auto text-center space-y-5">
+        
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/5 border border-white/10 backdrop-blur-md text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>Plataforma de Inteligencia Web para Equipos Senior</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-6xl font-extrabold tracking-tight text-white leading-none">
+          Arquitectura Web Modern, <br class="hidden sm:inline">
+          <span class="gradient-text">Noticias en Vivo & Rootkits Base</span>
+        </h1>
+
+        <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed">
+          Monitor de tendencias tecnológicas de alto rendimiento, análisis técnico de frameworks y código base listo para escalar proyectos cliente en minutos.
+        </p>
+
+        <!-- Dynamic AI Quick Search Bar -->
+        <div class="pt-4 max-w-2xl mx-auto">
+          <div class="relative flex items-center rounded-2xl bg-slate-900/90 border border-white/15 p-1.5 shadow-2xl focus-within:border-brand-500/60 focus-within:ring-2 focus-within:ring-brand-500/20 transition-all">
+            <div class="pl-4 pr-2 text-slate-400">
+              <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </div>
+            <input id="custom-search-input" type="text" 
+                   placeholder="Ej. 'Next.js 15 Server Actions', 'Microfrontends', 'Rust WebAssembly'..." 
+                   class="w-full bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none py-2.5 font-sans">
+            <button onclick="handleCustomTopicSearch()" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 flex-shrink-0">
+              <span>Buscar con AI</span>
+              <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Enterprise Metric Badges -->
+        <div class="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-left">
+            <p class="text-[10px] uppercase tracking-wider font-mono text-slate-500">Actualización</p>
+            <p class="text-sm font-bold text-slate-200 mt-0.5">Tiempo Real (AI)</p>
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-left">
+            <p class="text-[10px] uppercase tracking-wider font-mono text-slate-500">Seguridad & Code</p>
+            <p class="text-sm font-bold text-emerald-400 mt-0.5">Auditado v2.0</p>
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-left">
+            <p class="text-[10px] uppercase tracking-wider font-mono text-slate-500">Plantillas Ready</p>
+            <p class="text-sm font-bold text-slate-200 mt-0.5">Production Grade</p>
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-left">
+            <p class="text-[10px] uppercase tracking-wider font-mono text-slate-500">Compliance</p>
+            <p class="text-sm font-bold text-brand-400 mt-0.5">Web Standards 2026</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+
+    <!-- TAB 1: NEWS FEED -->
+    <section id="tab-news" class="space-y-8">
+      
+      <!-- Filter Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
+          <span class="text-xs font-mono uppercase tracking-wider text-slate-500 mr-2 flex-shrink-0">Filtrar por:</span>
+          <button onclick="filterNews('all')" class="news-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white shadow-sm" data-cat="all">Todos</button>
+          <button onclick="filterNews('Diseño & UI/UX')" class="news-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300 hover:border-white/20" data-cat="Diseño & UI/UX">Diseño & UI/UX</button>
+          <button onclick="filterNews('Frontend')" class="news-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300 hover:border-white/20" data-cat="Frontend">Frontend & JS</button>
+          <button onclick="filterNews('Backend')" class="news-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300 hover:border-white/20" data-cat="Backend">Backend & Cloud</button>
+          <button onclick="filterNews('IA & Web')" class="news-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300 hover:border-white/20" data-cat="IA & Web">Inteligencia Artificial</button>
+          <button onclick="filterNews('CSS & Design Systems')" class="news-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300 hover:border-white/20" data-cat="CSS & Design Systems">CSS & Systems</button>
+        </div>
+        
+        <div class="text-xs text-slate-400 font-mono flex items-center gap-2">
+          <i class="fa-solid fa-rotate-right text-brand-400"></i>
+          <span>Última sinc: <span id="last-sync-time" class="text-slate-200 font-semibold">Hoy</span></span>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="news-loader" class="hidden py-16 text-center glass-panel rounded-2xl my-6">
+        <div class="inline-block animate-spin rounded-full h-10 w-10 border-2 border-brand-500 border-t-transparent mb-4"></div>
+        <p class="text-slate-200 font-bold text-base">Escaneando ecosistema web global...</p>
+        <p class="text-xs text-slate-400 mt-1 font-mono">Consultando Google Search Grounding & Gemini Engine API</p>
+      </div>
+
+      <!-- News Grid -->
+      <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dynamically Populated Cards -->
+      </div>
+    </section>
+
+    <!-- TAB 2: ROOTKITS / STARTER TEMPLATES -->
+    <section id="tab-starters" class="hidden space-y-8">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-tight">Enterprise Rootkits & Starters</h2>
+          <p class="text-sm text-slate-400 mt-0.5">Arquitecturas base, configuraciones listas para despliegue e interfaces optimizadas.</p>
+        </div>
+        
+        <!-- Filter Starter Category -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
+          <button onclick="filterStarters('all')" class="starter-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white" data-type="all">Todos</button>
+          <button onclick="filterStarters('saas')" class="starter-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300" data-type="saas">SaaS Application</button>
+          <button onclick="filterStarters('landing')" class="starter-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300" data-type="landing">Landing Pages</button>
+          <button onclick="filterStarters('dashboard')" class="starter-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300" data-type="dashboard">Dashboards</button>
+          <button onclick="filterStarters('api')" class="starter-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300" data-type="api">REST APIs</button>
+        </div>
+      </div>
+
+      <!-- Starters Grid -->
+      <div id="starters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dynamically Populated Rootkits -->
+      </div>
+    </section>
+
+    <!-- TAB 3: SAVED ITEMS -->
+    <section id="tab-saved" class="hidden space-y-8">
+      <div class="pb-4 border-b border-white/10">
+        <h2 class="text-2xl font-bold text-white tracking-tight">Colección Guardada</h2>
+        <p class="text-sm text-slate-400 mt-0.5">Recursos, noticias y plantillas marcadas para referencia rápida.</p>
+      </div>
+
+      <div id="saved-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dynamically Populated Saved Items -->
+      </div>
+      
+      <div id="saved-empty-state" class="text-center py-20 glass-panel rounded-2xl hidden">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-900 border border-white/10 flex items-center justify-center text-slate-500 mb-4">
+          <i class="fa-regular fa-bookmark text-2xl"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white">No hay elementos guardados</h3>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Haz clic en el icono de marcador en cualquier tarjeta de noticias o rootkit para guardarlo en tu panel.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: NEWS DETAIL -->
+  <div id="news-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="glass-panel border border-white/15 rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative my-8 text-slate-100">
+      <button onclick="closeNewsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div id="news-modal-content">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ROOTKIT / STARTER CODE VIEWER -->
+  <div id="code-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-[#0b0f19] border border-white/15 rounded-2xl max-w-4xl w-full p-6 shadow-2xl relative my-8 text-slate-100 flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-[10px] font-mono bg-brand-500/20 text-brand-300 rounded border border-brand-500/30 font-bold uppercase">Starter Kit</span>
+            <h3 id="code-modal-title" class="text-xl font-bold text-white">Starter Code</h3>
+          </div>
+          <p id="code-modal-subtitle" class="text-xs text-slate-400 mt-1">Código optimizado y listo para producción</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="copyStarterCode()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-md">
+            <i class="fa-regular fa-copy"></i>
+            <span id="copy-btn-text">Copiar Código</span>
+          </button>
+          <button onclick="closeCodeModal()" class="text-slate-400 hover:text-white p-2 rounded-lg bg-white/5 hover:bg-white/10">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- File Switcher / Info Bar -->
+      <div class="flex items-center justify-between bg-slate-950 px-4 py-2.5 text-xs font-mono text-slate-400 border-b border-white/10">
+        <span id="code-file-name" class="flex items-center gap-2 text-brand-300">
+          <i class="fa-solid fa-file-code"></i> index.html
+        </span>
+        <span class="text-emerald-400 font-sans text-xs flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-check"></i> Testeado & Optimizado
+        </span>
+      </div>
+
+      <!-- Code Container -->
+      <div class="overflow-y-auto flex-grow my-4 rounded-xl bg-[#060911] p-5 border border-white/10">
+        <pre><code id="code-modal-body" class="text-xs sm:text-sm text-slate-200 leading-relaxed font-mono whitespace-pre-wrap"></code></pre>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-3 border-t border-white/10 flex justify-between items-center text-xs text-slate-400">
+        <span class="font-mono text-[11px]"><i class="fa-solid fa-terminal mr-1 text-brand-400"></i> Pegar en tu IDE de preferencia</span>
+        <button onclick="closeCodeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto border-t border-white/10 bg-slate-950/80 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="space-y-1 text-center md:text-left">
+        <div class="flex items-center justify-center md:justify-start gap-2">
+          <span class="font-bold text-white text-base">DevPulse Enterprise</span>
+          <span class="px-2 py-0.5 text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded">ONLINE</span>
+        </div>
+        <p class="text-xs text-slate-400">Portal de arquitectura de software, inteligencia web continua y plantillas de desarrollo.</p>
+      </div>
+      
+      <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 font-mono">
+        <span><i class="fa-solid fa-bolt text-amber-400 mr-1.5"></i>Gemini 3 Flash Powered</span>
+        <span>•</span>
+        <span><i class="fa-solid fa-shield-halved text-emerald-400 mr-1.5"></i>Strict Standards</span>
+        <span>•</span>
+        <span>&copy; 2026 DevPulse</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    // --- GLOBAL STATE ---
+    let newsArticles = [];
+    let savedItems = JSON.parse(localStorage.getItem('devpulse_saved') || '[]');
+    let currentNewsCategory = 'all';
+    let currentStarterCategory = 'all';
+    let currentActiveTab = 'news';
+
+    // Default High-Quality News Data from Design & Dev Portals
+    const initialDefaultNews = [
+      {
+        id: 'news-1',
+        title: 'Estrategias de Diseño UI con CSS Subgrid & Container Queries en 2026',
+        category: 'Diseño & UI/UX',
+        snippet: 'Aprende a maquetar componentes modulares adaptables a la interfaz sin depender exclusivamente del viewport.',
+        content: 'Publicado en Smashing Magazine, este análisis examina cómo `container-type: inline-size` y `subgrid` transformaron el diseño web de componentes. Ya no diseñamos para pantallas, sino para contenedores aislados. Se discuten patrones de diseño UI resilientes, jerarquía tipográfica fluida mediante `clamp()` y optimización de renderizado en navegadores modernos.',
+        date: 'Hace 1 hora',
+        source: 'Smashing Magazine',
+        sources: [{ title: 'Smashing Magazine', uri: 'https://www.smashingmagazine.com' }],
+        readTime: '5 min'
+      },
+      {
+        id: 'news-2',
+        title: 'Técnicas Awwwards: Animaciones 3D WebGL con Shaders de Rendimiento',
+        category: 'Diseño & UI/UX',
+        snippet: 'Desglose de efectos interactivos visuales con Three.js e interacciones fluidas mediante GPU.',
+        content: 'Un análisis exhaustivo de Codrops y Awwwards sobre cómo lograr experiencias inmersivas manteniendo 60 FPS. Se presentan arquitecturas de post-procesamiento con Shaders GLSL, carga perezosa de geometrías y sincronización de transiciones de scroll usando la API de Scroll-driven Animations nativa de CSS.',
+        date: 'Hace 3 horas',
+        source: 'Codrops & Awwwards',
+        sources: [{ title: 'Codrops', uri: 'https://tympanus.net/codrops' }],
+        readTime: '6 min'
+      },
+      {
+        id: 'news-3',
+        title: 'React 19 & Compiler: Guía de Arquitectura para Equipos Senior',
+        category: 'Frontend',
+        snippet: 'El compilador de React elimina la necesidad manual de useMemo y useCallback, transformando la optimización.',
+        content: 'React 19 introduce cambios fundamentales en el paradigma de rendimiento. Con el compilador automático en producción, React analiza las dependencias de los componentes durante la fase de compilación. Además, los Server Actions y el hook useActionState estandarizan el manejo de mutations de datos sin estados superfluos.',
+        date: 'Hace 4 horas',
+        source: 'CSS-Tricks / Frontend Focus',
+        sources: [{ title: 'CSS-Tricks', uri: 'https://css-tricks.com' }],
+        readTime: '4 min'
+      },
+      {
+        id: 'news-4',
+        title: 'Tailwind CSS v4.0: Compilación Ultrasónica con Motor Rust',
+        category: 'CSS & Design Systems',
+        snippet: 'El nuevo motor Oxide en Rust reduce los tiempos de compilación un 90% y simplifica la tematización.',
+        content: 'Tailwind v4 reescribe por completo su motor para aprovechar las capacidades multihilo de Rust. Ya no es imprescindible el archivo de configuración JS; todo el sistema de tokens de diseño se configura mediante la sintaxis nativa de CSS `@theme`, permitiendo una interoperabilidad perfecta con Web Components.',
+        date: 'Hace 6 horas',
+        source: 'Web.dev & Tailwind Labs',
+        sources: [{ title: 'Web.dev', uri: 'https://web.dev' }],
+        readTime: '3 min'
+      }
+    ];
+
+    // ROOTKITS / STARTER TEMPLATES DATA
+    const startersData = [
+      {
+        id: 'starter-design-1',
+        title: 'Interactive Design System & UI Micro-Interactions Component Kit',
+        type: 'landing',
+        description: 'Starter kit centrado en experiencia de usuario y diseño visual: tarjetas con tilt 3D, botones con efectos magnéticos, variables CSS dinámicas e indicadores táctiles.',
+        tags: ['UI/UX Design', 'CSS Animations', 'TailwindCSS', 'Micro-interactions'],
+        filename: 'design-system-ui.html',
+        code: `<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI/UX Interactive Component Starter</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-[#080c16] text-slate-100 min-h-screen flex items-center justify-center p-6">
+
+  <div class="max-w-4xl w-full space-y-8">
+    <div class="text-center space-y-2">
+      <span class="px-3 py-1 text-[11px] font-mono uppercase bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">Smashing / Codrops UI Pattern</span>
+      <h1 class="text-3xl font-extrabold text-white">Interactive Card & Micro-interactions</h1>
+      <p class="text-slate-400 text-sm">Componentes diseñados bajo principios de animación con CSS fluido y feedback háptico visual.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card p-6 rounded-2xl cursor-pointer">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold mb-4">✦</div>
+        <h2 class="text-xl font-bold text-white">Diseño Basado en Tokens</h2>
+        <p class="text-xs text-slate-400 mt-2 leading-relaxed">Sistemas de color semánticos y tipografía adaptativa optimizados para altos estándares de accesibilidad (WCAG AAA).</p>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl cursor-pointer">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold mb-4">★</div>
+        <h2 class="text-xl font-bold text-white">Micro-Interacciones 60FPS</h2>
+        <p class="text-xs text-slate-400 mt-2 leading-relaxed">Transiciones compuestas exclusivamente por 'transform' y 'opacity' para evitar reflows pesados en el DOM.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>`
+      },
+      {
+        id: 'starter-1',
+        title: 'SaaS Business Application (HTML + Tailwind v4 + Theme Toggle)',
+        type: 'saas',
+        description: 'Plantilla completa de grado empresarial con Navbar glassmorphism, Hero responsivo, tabla de precios y diseño oscuro integrado.',
+        tags: ['TailwindCSS', 'SaaS', 'Enterprise UI', 'JavaScript'],
+        filename: 'saas-starter-pro.html',
+        code: `<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise SaaS Starter</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+  
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-600/30">S</div>
+      <span class="font-extrabold text-lg text-white tracking-tight">SaaSify Pro</span>
+    </div>
+    <nav class="hidden md:flex gap-8 text-xs font-semibold text-slate-300">
+      <a href="#features" class="hover:text-white transition-colors">Plataforma</a>
+      <a href="#pricing" class="hover:text-white transition-colors">Planes</a>
+      <a href="#docs" class="hover:text-white transition-colors">Documentación</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <button class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white">Iniciar Sesión</button>
+      <button class="px-4 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg transition-all">Empezar Gratis</button>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-6xl mx-auto px-6 py-20 text-center flex flex-col items-center justify-center">
+    <span class="px-3 py-1 text-[11px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full mb-6">🚀 Versión Enterprise Ready</span>
+    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight max-w-4xl">
+      La infraestructura analítica para equipos de alto rendimiento
+    </h1>
+    <p class="mt-4 text-slate-400 text-base sm:text-lg max-w-2xl">
+      Aumenta la eficiencia del desarrollo web con nuestras APIs unificadas y tableros en tiempo real.
+    </p>
+    <div class="mt-8 flex gap-4">
+      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-white text-sm shadow-xl shadow-indigo-600/20">Iniciar prueba de 14 días</button>
+      <button class="px-6 py-3 bg-slate-900 border border-white/10 hover:bg-slate-800 font-bold rounded-xl text-slate-200 text-sm">Agendar Demo</button>
+    </div>
+  </main>
+
+</body>
+</html>`
+      },
+      {
+        id: 'starter-2',
+        title: 'Executive Admin Dashboard Framework',
+        type: 'dashboard',
+        description: 'Panel de control administrativo con Sidebar de alta fidelidad, KPIs analíticos, tablas con badges de estado e indicador de salud del sistema.',
+        tags: ['Dashboard', 'Data UI', 'TailwindCSS'],
+        filename: 'admin-dashboard.html',
+        code: `<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-[#0b0f19] text-slate-100 flex min-h-screen">
+
+  <aside class="w-64 bg-slate-950 border-r border-white/10 p-5 flex flex-col justify-between hidden md:flex">
+    <div class="space-y-6">
+      <div class="flex items-center gap-3 px-2">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center font-extrabold">A</div>
+        <span class="font-extrabold text-lg text-white">ApexAdmin</span>
+      </div>
+      <nav class="space-y-1">
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-indigo-600/20 text-indigo-400 font-bold text-xs border border-indigo-500/30">
+          <i class="fa-solid fa-chart-line"></i> Dashboard Metrics
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 text-xs font-semibold">
+          <i class="fa-solid fa-users"></i> Gestión Usuarios
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-white/5 text-xs font-semibold">
+          <i class="fa-solid fa-server"></i> Servidores & Logs
+        </a>
+      </nav>
+    </div>
+  </aside>
+
+  <main class="flex-grow p-8 overflow-y-auto">
+    <div class="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Resumen Ejecutivo</h1>
+        <p class="text-xs text-slate-400">Métricas clave del sistema e indicadores de tráfico global.</p>
+      </div>
+      <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg">+ Exportar Reporte</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      <div class="bg-slate-900/60 p-5 rounded-2xl border border-white/10">
+        <span class="text-[10px] text-slate-400 font-mono font-bold uppercase">Ingresos Mensuales</span>
+        <div class="text-3xl font-extrabold mt-2 text-white">$128,450.00</div>
+        <span class="text-xs text-emerald-400 font-bold flex items-center gap-1 mt-2"><i class="fa-solid fa-arrow-up"></i> +14.2% respecto al mes anterior</span>
+      </div>
+      <div class="bg-slate-900/60 p-5 rounded-2xl border border-white/10">
+        <span class="text-[10px] text-slate-400 font-mono font-bold uppercase">Uso de CPU Servidores</span>
+        <div class="text-3xl font-extrabold mt-2 text-white">32.4%</div>
+        <span class="text-xs text-emerald-400 font-bold flex items-center gap-1 mt-2"><i class="fa-solid fa-check"></i> Operación óptima</span>
+      </div>
+      <div class="bg-slate-900/60 p-5 rounded-2xl border border-white/10">
+        <span class="text-[10px] text-slate-400 font-mono font-bold uppercase">Peticiones / seg</span>
+        <div class="text-3xl font-extrabold mt-2 text-white">4,820</div>
+        <span class="text-xs text-slate-400 font-bold flex items-center gap-1 mt-2">Latencia prom: 18ms</span>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>`
+      }
+    ];
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+      newsArticles = [...initialDefaultNews];
+      renderNews();
+      renderStarters();
+      updateSavedCount();
+      
+      // Fetch fresh AI grounded news automatically
+      fetchLiveNews(false);
+    });
+
+    // --- TAB SWITCHING ---
+    function switchTab(tab) {
+      currentActiveTab = tab;
+      const tabs = ['news', 'starters', 'saved'];
+      tabs.forEach(t => {
+        const section = document.getElementById(`tab-${t}`);
+        const navBtn = document.getElementById(`nav-${t}`);
+        const mobBtn = document.getElementById(`mob-nav-${t}`);
+
+        if (t === tab) {
+          section.classList.remove('hidden');
+          navBtn?.classList.add('bg-brand-600', 'text-white', 'shadow-md');
+          navBtn?.classList.remove('text-slate-400');
+          mobBtn?.classList.add('text-brand-400');
+          mobBtn?.classList.remove('text-slate-400');
+        } else {
+          section.classList.add('hidden');
+          navBtn?.classList.remove('bg-brand-600', 'text-white', 'shadow-md');
+          navBtn?.classList.add('text-slate-400');
+          mobBtn?.classList.remove('text-brand-400');
+          mobBtn?.classList.add('text-slate-400');
+        }
+      });
+
+      if (tab === 'saved') {
+        renderSavedItems();
+      }
+    }
+
+    // --- RENDER NEWS ---
+    function renderNews() {
+      const grid = document.getElementById('news-grid');
+      grid.innerHTML = '';
+
+      const filtered = currentNewsCategory === 'all' 
+        ? newsArticles 
+        : newsArticles.filter(item => item.category === currentNewsCategory);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center glass-panel rounded-2xl text-slate-400">
+            No hay artículos disponibles en la categoría "${currentNewsCategory}".
+          </div>`;
+        return;
+      }
+
+      filtered.forEach(article => {
+        const isSaved = savedItems.some(i => i.id === article.id);
+        const card = document.createElement('article');
+        card.className = 'glass-panel rounded-2xl p-6 hover:border-white/20 transition-all flex flex-col justify-between group hover:shadow-glow-indigo';
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <span class="px-2.5 py-1 text-[10px] font-mono font-bold uppercase rounded-md bg-brand-500/10 text-brand-300 border border-brand-500/20">
+                ${article.category}
+              </span>
+              <div class="flex items-center gap-3 text-xs text-slate-400 font-mono">
+                <span>${article.readTime || '3 min'}</span>
+                <button onclick="toggleSaveItem('${article.id}', 'news')" class="text-slate-400 hover:text-amber-400 transition-colors p-1" title="Guardar">
+                  <i class="${isSaved ? 'fa-solid text-amber-400' : 'fa-regular'} fa-bookmark"></i>
+                </button>
+              </div>
+            </div>
+
+            <h3 class="font-bold text-lg text-white group-hover:text-brand-300 transition-colors leading-snug cursor-pointer" onclick="openNewsModal('${article.id}')">
+              ${article.title}
+            </h3>
+
+            <p class="text-xs sm:text-sm text-slate-400 mt-3 line-clamp-3 leading-relaxed">
+              ${article.snippet}
+            </p>
+          </div>
+
+          <div class="pt-5 mt-5 border-t border-white/5 flex items-center justify-between text-xs text-slate-400 font-mono">
+            <span class="text-slate-400 flex items-center gap-1.5"><i class="fa-solid fa-compass text-brand-400"></i>${article.source}</span>
+            <span>${article.date}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // --- FILTER NEWS ---
+    function filterNews(category) {
+      currentNewsCategory = category;
+      document.querySelectorAll('.news-filter-btn').forEach(btn => {
+        if (btn.dataset.cat === category) {
+          btn.className = 'news-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white shadow-sm';
+        } else {
+          btn.className = 'news-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300 hover:border-white/20';
+        }
+      });
+      renderNews();
+    }
+
+    // --- RENDER STARTERS ---
+    function renderStarters() {
+      const grid = document.getElementById('starters-grid');
+      grid.innerHTML = '';
+
+      const filtered = currentStarterCategory === 'all'
+        ? startersData
+        : startersData.filter(s => s.type === currentStarterCategory);
+
+      filtered.forEach(starter => {
+        const isSaved = savedItems.some(i => i.id === starter.id);
+        const card = document.createElement('div');
+        card.className = 'glass-panel rounded-2xl p-6 hover:border-white/20 transition-all flex flex-col justify-between';
+
+        const tagsHtml = starter.tags.map(t => `<span class="px-2 py-0.5 bg-white/5 text-slate-300 rounded text-[10px] font-mono border border-white/5">${t}</span>`).join(' ');
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[10px] font-bold font-mono text-brand-400 uppercase tracking-wider flex items-center gap-1">
+                <i class="fa-solid fa-terminal"></i> ${starter.type}
+              </span>
+              <button onclick="toggleSaveItem('${starter.id}', 'starter')" class="text-slate-400 hover:text-amber-400 transition-colors p-1">
+                <i class="${isSaved ? 'fa-solid text-amber-400' : 'fa-regular'} fa-bookmark"></i>
+              </button>
+            </div>
+            <h3 class="font-bold text-lg text-white">${starter.title}</h3>
+            <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">${starter.description}</p>
+            <div class="flex flex-wrap gap-1.5 mt-4">${tagsHtml}</div>
+          </div>
+
+          <div class="pt-5 mt-5 border-t border-white/5 flex items-center justify-between">
+            <span class="text-xs text-slate-400 font-mono">${starter.filename}</span>
+            <button onclick="openStarterModal('${starter.id}')" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-md">
+              <i class="fa-solid fa-code"></i> Inspeccionar Kit
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // --- FILTER STARTERS ---
+    function filterStarters(type) {
+      currentStarterCategory = type;
+      document.querySelectorAll('.starter-filter-btn').forEach(btn => {
+        if (btn.dataset.type === type) {
+          btn.className = 'starter-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white';
+        } else {
+          btn.className = 'starter-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-900 border border-white/10 text-slate-300';
+        }
+      });
+      renderStarters();
+    }
+
+    // --- GEMINI API: FETCH LIVE NEWS INCLUDING DESIGN & DEV PORTALS ---
+    async function fetchLiveNews(isManualRefresh = false) {
+      const loader = document.getElementById('news-loader');
+      const refreshIcon = document.getElementById('refresh-icon');
+
+      if (isManualRefresh) {
+        refreshIcon.classList.add('animate-spin');
+      }
+      loader.classList.remove('hidden');
+
+      const userQuery = "Busca y resume las 4 noticias o tendencias técnicas más recientes sobre diseño web, CSS, UI/UX y desarrollo frontend en sitios como CSS-Tricks, Smashing Magazine, Codrops, Awwwards y Web.dev del último mes.";
+      const systemPrompt = `Eres un director de arte digital y arquitecto frontend senior. Responde ÚNICAMENTE en formato JSON plano con un array de 4 noticias de alto nivel de diseño y desarrollo web. Cada objeto debe tener exactamente estas propiedades:
+- id: string único
+- title: título técnico de diseño o frontend
+- category: una de ["Diseño & UI/UX", "Frontend", "Backend", "IA & Web", "CSS & Design Systems"]
+- snippet: resumen ejecutivo (máx 20 palabras)
+- content: explicación detallada de 2 párrafos sobre patrón de diseño, UI/UX y desarrollo web.
+- date: e.g. "Hace unas horas", "Hoy"
+- source: portal de origen (e.g. "CSS-Tricks", "Smashing Magazine", "Codrops", "Awwwards", "Web.dev")
+- readTime: e.g. "4 min"
+NO utilices bloques markdown tipo \`\`\`json. Responde solo el JSON puro.`;
+
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      try {
+        const payload = {
+          contents: [{ parts: [{ text: userQuery }] }],
+          tools: [{ "google_search": {} }],
+          systemInstruction: { parts: [{ text: systemPrompt }] }
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const candidate = result.candidates?.[0];
+        const rawText = candidate?.content?.parts?.[0]?.text;
+
+        if (rawText) {
+          try {
+            const cleanJsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const fetchedArticles = JSON.parse(cleanJsonText);
+
+            if (Array.isArray(fetchedArticles) && fetchedArticles.length > 0) {
+              newsArticles = fetchedArticles;
+              document.getElementById('last-sync-time').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+          } catch (e) {
+            console.warn("Respuesta JSON alternativa manteniendo base local:", e);
+          }
+        }
+      } catch (err) {
+        console.error("Error consultando Gemini API:", err);
+      } finally {
+        loader.classList.add('hidden');
+        if (isManualRefresh) refreshIcon.classList.remove('animate-spin');
+        renderNews();
+      }
+    }
+
+    // --- CUSTOM TOPIC SEARCH / AI GENERATION ---
+    async function handleCustomTopicSearch() {
+      const input = document.getElementById('custom-search-input');
+      const topic = input.value.trim();
+      if (!topic) return;
+
+      switchTab('news');
+      const loader = document.getElementById('news-loader');
+      loader.classList.remove('hidden');
+
+      const userQuery = `Busca las novedades de diseño UI/UX y patrones técnicos web sobre "${topic}" en fuentes como Smashing Magazine, CSS-Tricks o Awwwards. Responde con 3 artículos.`;
+      const systemPrompt = `Responde ÚNICAMENTE en formato JSON plano con un array de 3 objetos con las propiedades: id, title, category, snippet, content, date, source, readTime.`;
+
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      try {
+        const payload = {
+          contents: [{ parts: [{ text: userQuery }] }],
+          tools: [{ "google_search": {} }],
+          systemInstruction: { parts: [{ text: systemPrompt }] }
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (rawText) {
+          const cleanJsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+          const customArticles = JSON.parse(cleanJsonText);
+          if (Array.isArray(customArticles) && customArticles.length > 0) {
+            newsArticles = [...customArticles, ...newsArticles];
+            renderNews();
+          }
+        }
+      } catch (e) {
+        console.error("Error en búsqueda personalizada:", e);
+      } finally {
+        loader.classList.add('hidden');
+        input.value = '';
+      }
+    }
+
+    function openCustomQueryModal() {
+      document.getElementById('custom-search-input').focus();
+      window.scrollTo({ top: 180, behavior: 'smooth' });
+    }
+
+    // --- MODALS HANDLING ---
+    function openNewsModal(articleId) {
+      const article = newsArticles.find(a => a.id === articleId);
+      if (!article) return;
+
+      const modalContent = document.getElementById('news-modal-content');
+      modalContent.innerHTML = `
+        <div class="flex items-center gap-2 mb-4">
+          <span class="px-2.5 py-1 text-[10px] font-mono font-bold uppercase rounded-md bg-brand-500/10 text-brand-300 border border-brand-500/20">
+            ${article.category}
+          </span>
+          <span class="text-xs text-slate-400 font-mono">• ${article.readTime || '3 min'} lectura</span>
+        </div>
+        <h2 class="text-2xl font-bold text-white leading-snug mb-3">${article.title}</h2>
+        <div class="flex items-center gap-4 text-xs text-slate-400 font-mono border-b border-white/10 pb-4 mb-5">
+          <span><i class="fa-solid fa-compass text-brand-400 mr-1.5"></i>${article.source}</span>
+          <span>•</span>
+          <span>${article.date}</span>
+        </div>
+        <div class="text-slate-300 text-sm leading-relaxed space-y-4 font-sans">
+          ${article.content || article.snippet}
+        </div>
+      `;
+
+      document.getElementById('news-modal').classList.remove('hidden');
+      document.getElementById('news-modal').classList.add('flex');
+    }
+
+    function closeNewsModal() {
+      document.getElementById('news-modal').classList.add('hidden');
+      document.getElementById('news-modal').classList.remove('flex');
+    }
+
+    function openStarterModal(starterId) {
+      const starter = startersData.find(s => s.id === starterId);
+      if (!starter) return;
+
+      document.getElementById('code-modal-title').textContent = starter.title;
+      document.getElementById('code-modal-subtitle').textContent = starter.description;
+      document.getElementById('code-file-name').innerHTML = `<i class="fa-solid fa-file-code text-brand-400 mr-2"></i>${starter.filename}`;
+      document.getElementById('code-modal-body').textContent = starter.code;
+
+      document.getElementById('code-modal').classList.remove('hidden');
+      document.getElementById('code-modal').classList.add('flex');
+    }
+
+    function closeCodeModal() {
+      document.getElementById('code-modal').classList.add('hidden');
+      document.getElementById('code-modal').classList.remove('flex');
+    }
+
+    function copyStarterCode() {
+      const codeText = document.getElementById('code-modal-body').textContent;
+      
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = codeText;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempTextArea);
+
+      const btnText = document.getElementById('copy-btn-text');
+      btnText.textContent = '¡Copiado!';
+      setTimeout(() => {
+        btnText.textContent = 'Copiar Código';
+      }, 2000);
+    }
+
+    // --- BOOKMARK / SAVED SYSTEM ---
+    function toggleSaveItem(id, itemType) {
+      const existingIndex = savedItems.findIndex(i => i.id === id);
+      if (existingIndex >= 0) {
+        savedItems.splice(existingIndex, 1);
+      } else {
+        if (itemType === 'news') {
+          const item = newsArticles.find(n => n.id === id);
+          if (item) savedItems.push({ ...item, itemType: 'news' });
+        } else {
+          const item = startersData.find(s => s.id === itemType === 'starter' ? s : null) || startersData.find(s => s.id === id);
+          if (item) savedItems.push({ ...item, itemType: 'starter' });
+        }
+      }
+
+      localStorage.setItem('devpulse_saved', JSON.stringify(savedItems));
+      updateSavedCount();
+      renderNews();
+      renderStarters();
+      if (currentActiveTab === 'saved') renderSavedItems();
+    }
+
+    function updateSavedCount() {
+      document.getElementById('saved-count').textContent = savedItems.length;
+    }
+
+    function renderSavedItems() {
+      const grid = document.getElementById('saved-grid');
+      const emptyState = document.getElementById('saved-empty-state');
+      grid.innerHTML = '';
+
+      if (savedItems.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      savedItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'glass-panel rounded-2xl p-6 flex flex-col justify-between';
+
+        if (item.itemType === 'news') {
+          card.innerHTML = `
+            <div>
+              <span class="text-[10px] font-mono font-bold text-brand-400 uppercase">Noticia • ${item.category}</span>
+              <h3 class="font-bold text-base text-white mt-1.5 leading-snug">${item.title}</h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2">${item.snippet}</p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-white/5 flex justify-between items-center text-xs">
+              <button onclick="openNewsModal('${item.id}')" class="font-bold text-brand-300 hover:text-white">Leer Detalle</button>
+              <button onclick="toggleSaveItem('${item.id}', 'news')" class="text-rose-400 font-medium">Remover</button>
+            </div>
+          `;
+        } else {
+          card.innerHTML = `
+            <div>
+              <span class="text-[10px] font-mono font-bold text-indigo-400 uppercase">Rootkit • ${item.type}</span>
+              <h3 class="font-bold text-base text-white mt-1.5 leading-snug">${item.title}</h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2">${item.description}</p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-white/5 flex justify-between items-center text-xs">
+              <button onclick="openStarterModal('${item.id}')" class="font-bold text-brand-300 hover:text-white">Ver Código</button>
+              <button onclick="toggleSaveItem('${item.id}', 'starter')" class="text-rose-400 font-medium">Remover</button>
+            </div>
+          `;
+        }
+        grid.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
